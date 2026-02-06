@@ -1,0 +1,2944 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>HighFive - 5:1 Parenting Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================ */
+/* DESIGN TOKENS                                */
+/* ============================================ */
+:root {
+  --color-praise: #4CAF82;
+  --color-praise-light: #E8F5EE;
+  --color-praise-dark: #2E7D56;
+  --color-praise-glow: rgba(76, 175, 130, 0.3);
+
+  --color-correct: #8E99A4;
+  --color-correct-light: #F0F2F4;
+  --color-correct-dark: #6B7580;
+
+  --color-accent: #F5A623;
+  --color-accent-light: #FFF3E0;
+  --color-accent-dark: #E09100;
+
+  --color-bg-primary: #FAFBFC;
+  --color-bg-secondary: #FFFFFF;
+  --color-bg-tertiary: #F0F2F5;
+
+  --color-text-primary: #1A1D21;
+  --color-text-secondary: #5F6B7A;
+  --color-text-tertiary: #9CA3AF;
+  --color-text-inverse: #FFFFFF;
+
+  --color-success: #4CAF82;
+  --color-warning: #F5A623;
+  --color-info: #5B9BD5;
+  --color-danger: #E57373;
+
+  --color-child-coral: #FF8A80;
+  --color-child-sky: #82B1FF;
+  --color-child-lavender: #B39DDB;
+  --color-child-mint: #80CBC4;
+  --color-child-sunflower: #FFD54F;
+  --color-child-peach: #FFAB91;
+
+  --color-bead-empty: #E8ECF0;
+  --color-bead-filled: var(--color-praise);
+  --color-bead-border: #D1D5DB;
+
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-size-xs: 11px;
+  --font-size-sm: 13px;
+  --font-size-md: 15px;
+  --font-size-lg: 18px;
+  --font-size-xl: 22px;
+  --font-size-2xl: 30px;
+  --font-size-3xl: 42px;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.1);
+  --shadow-glow-praise: 0 0 24px rgba(76,175,130,0.35);
+  --shadow-glow-accent: 0 0 24px rgba(245,166,35,0.35);
+
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+
+  --touch-min: 44px;
+
+  --tab-bar-height: 60px;
+  --header-height: 52px;
+}
+
+/* DARK MODE */
+[data-theme="dark"] {
+  --color-bg-primary: #0F1115;
+  --color-bg-secondary: #1A1D23;
+  --color-bg-tertiary: #252830;
+  --color-text-primary: #F0F2F5;
+  --color-text-secondary: #A0A8B4;
+  --color-text-tertiary: #6B7280;
+  --color-bead-empty: #2A2E36;
+  --color-bead-border: #3A3F4A;
+  --color-praise-light: #1A2E24;
+  --color-correct-light: #252830;
+  --color-accent-light: #2A2418;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+/* ============================================ */
+/* RESET & BASE                                 */
+/* ============================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-family: var(--font-family);
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+body {
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  overflow: hidden;
+  height: 100dvh;
+  width: 100%;
+  position: fixed;
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  cursor: pointer;
+  background: none;
+  color: inherit;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+input {
+  font-family: inherit;
+  border: none;
+  outline: none;
+  background: none;
+  color: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================ */
+/* APP SHELL                                    */
+/* ============================================ */
+#app {
+  max-width: 430px;
+  margin: 0 auto;
+  height: 100dvh;
+  position: relative;
+  overflow: hidden;
+  background: var(--color-bg-primary);
+}
+
+.screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(20px);
+  transition: opacity var(--duration-normal) var(--ease-smooth),
+              transform var(--duration-normal) var(--ease-smooth);
+  padding-bottom: calc(var(--tab-bar-height) + 20px);
+}
+
+.screen.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+
+/* ============================================ */
+/* TAB BAR                                      */
+/* ============================================ */
+#tab-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--tab-bar-height);
+  background: var(--color-bg-secondary);
+  border-top: 1px solid var(--color-bg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: var(--space-sm);
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
+  border-radius: var(--radius-sm);
+  transition: color var(--duration-fast);
+  color: var(--color-text-tertiary);
+}
+
+.tab-item.active {
+  color: var(--color-praise);
+}
+
+.tab-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.tab-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ============================================ */
+/* SCREEN HEADER                                */
+/* ============================================ */
+.screen-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-lg);
+  height: var(--header-height);
+  background: var(--color-bg-primary);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.screen-header h2 {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+}
+
+.header-action {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-tertiary);
+  font-size: 18px;
+  transition: background var(--duration-fast);
+}
+
+.header-action:active {
+  background: var(--color-bead-border);
+}
+
+/* ============================================ */
+/* ONBOARDING                                   */
+/* ============================================ */
+#screen-onboarding {
+  background: var(--color-bg-secondary);
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 0;
+}
+
+.onboarding-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.onboarding-cards {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.onboarding-card {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2xl) var(--space-xl);
+  text-align: center;
+  opacity: 0;
+  transform: translateX(60px);
+  transition: opacity var(--duration-normal) var(--ease-smooth),
+              transform var(--duration-normal) var(--ease-smooth);
+}
+
+.onboarding-card.active {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.onboarding-card.exiting {
+  opacity: 0;
+  transform: translateX(-60px);
+}
+
+.onboarding-visual {
+  font-size: 72px;
+  margin-bottom: var(--space-xl);
+  line-height: 1;
+}
+
+.onboarding-ratio {
+  font-size: 80px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-praise);
+  margin-bottom: var(--space-lg);
+  line-height: 1;
+}
+
+.onboarding-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-md);
+  color: var(--color-text-primary);
+}
+
+.onboarding-desc {
+  font-size: var(--font-size-md);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  max-width: 300px;
+}
+
+/* Onboarding bead demo */
+.onboarding-beads {
+  display: flex;
+  gap: 12px;
+  margin: var(--space-lg) 0;
+}
+
+.onboarding-bead {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  border: 2.5px solid var(--color-bead-border);
+  background: var(--color-bead-empty);
+  transition: all var(--duration-normal) var(--ease-bounce);
+}
+
+.onboarding-bead.filled {
+  background: var(--color-praise);
+  border-color: var(--color-praise);
+  transform: scale(1.1);
+}
+
+.onboarding-bead.correction {
+  background: var(--color-correct);
+  border-color: var(--color-correct);
+  width: 28px;
+  height: 28px;
+  align-self: center;
+}
+
+/* Onboarding form */
+.onboarding-form {
+  width: 100%;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  align-items: center;
+}
+
+.form-group {
+  width: 100%;
+  text-align: left;
+}
+
+.form-label {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-sm);
+}
+
+.form-input {
+  width: 100%;
+  padding: 14px var(--space-md);
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  text-align: center;
+  transition: box-shadow var(--duration-fast);
+}
+
+.form-input:focus {
+  box-shadow: 0 0 0 2px var(--color-praise);
+}
+
+.form-input::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.emoji-picker {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--space-sm);
+}
+
+.emoji-option {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  background: var(--color-bg-tertiary);
+  transition: all var(--duration-fast);
+  border: 2px solid transparent;
+}
+
+.emoji-option.selected {
+  border-color: var(--color-praise);
+  background: var(--color-praise-light);
+  transform: scale(1.1);
+}
+
+.color-picker {
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: center;
+}
+
+.color-option {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  transition: all var(--duration-fast);
+  border: 3px solid transparent;
+}
+
+.color-option.selected {
+  border-color: var(--color-text-primary);
+  transform: scale(1.15);
+}
+
+/* Onboarding bottom */
+.onboarding-bottom {
+  padding: var(--space-lg) var(--space-xl) var(--space-2xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.onboarding-dots {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.onboarding-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-bead-empty);
+  transition: all var(--duration-normal);
+}
+
+.onboarding-dot.active {
+  background: var(--color-praise);
+  width: 24px;
+}
+
+.btn-primary {
+  width: 100%;
+  max-width: 300px;
+  padding: 16px;
+  background: var(--color-praise);
+  color: var(--color-text-inverse);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  transition: all var(--duration-fast);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:active {
+  transform: scale(0.97);
+  background: var(--color-praise-dark);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.btn-secondary {
+  padding: 12px 24px;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ============================================ */
+/* MAIN TRACKER                                 */
+/* ============================================ */
+#screen-tracker {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Child Switcher */
+.child-switcher {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  height: var(--header-height);
+}
+
+.child-switcher-arrow {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--color-text-tertiary);
+  transition: all var(--duration-fast);
+  visibility: hidden;
+}
+
+.child-switcher-arrow.visible {
+  visibility: visible;
+}
+
+.child-switcher-arrow:active {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+}
+
+.child-switcher-name {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+}
+
+.child-avatar-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+/* Bead Visualization */
+.bead-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-lg) var(--space-lg) var(--space-md);
+}
+
+.bead-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: var(--space-lg);
+  position: relative;
+}
+
+.bead {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  border: 2.5px solid var(--color-bead-border);
+  background: var(--color-bead-empty);
+  position: relative;
+  transition: border-color var(--duration-normal) var(--ease-smooth);
+}
+
+.bead:nth-child(1) { transform: translateY(3px); }
+.bead:nth-child(2) { transform: translateY(1px); }
+.bead:nth-child(3) { transform: translateY(0px); }
+.bead:nth-child(4) { transform: translateY(1px); }
+.bead:nth-child(5) { transform: translateY(3px); }
+
+.bead-fill {
+  position: absolute;
+  inset: -1px;
+  border-radius: var(--radius-full);
+  transform: scale(0);
+  transition: transform var(--duration-normal) var(--ease-bounce);
+}
+
+.bead.filled .bead-fill {
+  transform: scale(1);
+}
+
+.bead.filled {
+  border-color: transparent;
+}
+
+@keyframes bead-pop {
+  0% { transform: scale(0); }
+  70% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+.bead.just-filled .bead-fill {
+  animation: bead-pop 0.4s var(--ease-bounce) forwards;
+}
+
+@keyframes bead-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+.bead.filled .bead-fill {
+  animation: bead-breathe 3s ease-in-out infinite;
+}
+
+.bead.just-filled .bead-fill {
+  animation: bead-pop 0.4s var(--ease-bounce) forwards;
+}
+
+@keyframes bead-drain {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0); opacity: 0; }
+}
+
+.bead.draining .bead-fill {
+  animation: bead-drain 0.3s var(--ease-smooth) forwards;
+}
+
+/* Sparkle effect */
+@keyframes sparkle {
+  0% { transform: translate(-50%,-50%) scale(0); opacity: 1; }
+  100% { transform: translate(-50%,-50%) scale(1) translate(var(--tx), var(--ty)); opacity: 0; }
+}
+
+.sparkle-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.sparkle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  top: 50%;
+  left: 50%;
+  opacity: 0;
+}
+
+.sparkle.animate {
+  animation: sparkle 0.7s var(--ease-out) forwards;
+}
+
+/* Glow on all beads for cycle complete */
+@keyframes bead-glow {
+  0%, 100% { box-shadow: none; }
+  50% { box-shadow: var(--shadow-glow-praise); }
+}
+
+.bead-row.cycle-complete .bead.filled {
+  animation: bead-glow 0.8s ease-in-out;
+}
+
+/* Ratio display */
+.ratio-display {
+  text-align: center;
+}
+
+.ratio-value {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+}
+
+.ratio-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-tertiary);
+  margin-top: 2px;
+}
+
+.ratio-badge {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+  display: inline-block;
+}
+
+.ratio-badge.excellent {
+  background: var(--color-praise-light);
+  color: var(--color-praise-dark);
+}
+
+.ratio-badge.good {
+  background: var(--color-accent-light);
+  color: var(--color-accent-dark);
+}
+
+.ratio-badge.needs-work {
+  background: var(--color-correct-light);
+  color: var(--color-correct-dark);
+}
+
+.today-stats {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  margin-top: var(--space-sm);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+}
+
+/* Action Buttons */
+.action-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-lg);
+  padding: var(--space-md) var(--space-lg) var(--space-xl);
+}
+
+.praise-btn {
+  width: 150px;
+  height: 150px;
+  border-radius: var(--radius-full);
+  background: var(--color-praise);
+  color: var(--color-text-inverse);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  box-shadow: 0 6px 20px rgba(76, 175, 130, 0.35);
+  transition: transform var(--duration-fast) var(--ease-smooth),
+              box-shadow var(--duration-fast);
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.5px;
+}
+
+.praise-btn:active {
+  transform: scale(0.92);
+  box-shadow: 0 2px 8px rgba(76, 175, 130, 0.3);
+}
+
+.praise-btn .btn-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+/* Ripple effect */
+.ripple {
+  position: absolute;
+  border-radius: var(--radius-full);
+  background: rgba(255,255,255,0.3);
+  transform: scale(0);
+  pointer-events: none;
+}
+
+@keyframes ripple-expand {
+  to { transform: scale(2.5); opacity: 0; }
+}
+
+.ripple.animate {
+  animation: ripple-expand 0.5s var(--ease-out) forwards;
+}
+
+.correct-btn {
+  padding: 14px 40px;
+  background: var(--color-correct-light);
+  color: var(--color-correct-dark);
+  border-radius: var(--radius-xl);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  transition: transform var(--duration-fast) var(--ease-smooth),
+              background var(--duration-fast);
+  position: relative;
+}
+
+.correct-btn:active {
+  transform: scale(0.95);
+  background: var(--color-bead-border);
+}
+
+@keyframes pulse-correction {
+  0%, 100% { box-shadow: none; }
+  50% { box-shadow: 0 0 0 4px rgba(142, 153, 164, 0.2); }
+}
+
+.correct-btn.slot-available {
+  animation: pulse-correction 2s ease-in-out infinite;
+}
+
+/* Nudge banner */
+.nudge-banner {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100%);
+  max-width: 430px;
+  width: 100%;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-accent-light);
+  color: var(--color-accent-dark);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  text-align: center;
+  z-index: 200;
+  transition: transform var(--duration-normal) var(--ease-smooth);
+  border-bottom: 1px solid rgba(245, 166, 35, 0.2);
+}
+
+.nudge-banner.visible {
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Encouragement toast */
+.encouragement-toast {
+  position: fixed;
+  bottom: calc(var(--tab-bar-height) + 20px);
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  opacity: 0;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  box-shadow: var(--shadow-md);
+  z-index: 150;
+  transition: all var(--duration-normal) var(--ease-smooth);
+  pointer-events: none;
+  white-space: nowrap;
+  max-width: 90%;
+  text-align: center;
+}
+
+.encouragement-toast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ============================================ */
+/* PROFILES SCREEN                              */
+/* ============================================ */
+.profiles-list {
+  padding: 0 var(--space-lg) var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--duration-fast);
+}
+
+.profile-card:active {
+  transform: scale(0.98);
+}
+
+.profile-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.profile-name {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+}
+
+.profile-stats {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+}
+
+.profile-active-badge {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-praise);
+  background: var(--color-praise-light);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.profile-mini-beads {
+  display: flex;
+  gap: 4px;
+}
+
+.profile-mini-bead {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+}
+
+.add-child-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-lg);
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-lg);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+  border: 2px dashed var(--color-bead-border);
+  transition: all var(--duration-fast);
+}
+
+.add-child-card:active {
+  background: var(--color-bg-secondary);
+  border-color: var(--color-praise);
+  color: var(--color-praise);
+}
+
+/* ============================================ */
+/* MODAL                                        */
+/* ============================================ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 300;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-normal);
+}
+
+.modal-backdrop.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal {
+  max-width: 430px;
+  width: 100%;
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  padding: var(--space-lg) var(--space-lg) var(--space-2xl);
+  transform: translateY(100%);
+  transition: transform var(--duration-normal) var(--ease-smooth);
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.modal-backdrop.visible .modal {
+  transform: translateY(0);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-lg);
+}
+
+.modal-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+}
+
+.modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.btn-danger {
+  padding: 12px;
+  color: var(--color-danger);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  text-align: center;
+  margin-top: var(--space-md);
+}
+
+/* ============================================ */
+/* HISTORY SCREEN                               */
+/* ============================================ */
+.history-toggle {
+  display: flex;
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-full);
+  padding: 3px;
+  margin: 0 var(--space-lg) var(--space-md);
+}
+
+.history-toggle-btn {
+  flex: 1;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  transition: all var(--duration-fast);
+  text-align: center;
+}
+
+.history-toggle-btn.active {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.chart-container {
+  margin: 0 var(--space-lg) var(--space-lg);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.chart-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-md);
+}
+
+.chart-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 120px;
+}
+
+.chart-bar-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.chart-bar {
+  width: 100%;
+  max-width: 32px;
+  border-radius: 4px 4px 0 0;
+  min-height: 4px;
+  transition: height var(--duration-slow) var(--ease-smooth);
+}
+
+.chart-bar.excellent { background: var(--color-praise); }
+.chart-bar.good { background: var(--color-accent); }
+.chart-bar.low { background: var(--color-correct); }
+.chart-bar.none { background: var(--color-bead-empty); min-height: 4px; }
+
+.chart-bar-label {
+  font-size: 10px;
+  color: var(--color-text-tertiary);
+  font-weight: var(--font-weight-medium);
+}
+
+.chart-ratio-line {
+  width: 100%;
+  border-top: 2px dashed var(--color-praise);
+  opacity: 0.3;
+  position: relative;
+  margin-bottom: var(--space-sm);
+}
+
+.chart-ratio-label {
+  position: absolute;
+  right: 0;
+  top: -18px;
+  font-size: 10px;
+  color: var(--color-praise);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Summary cards */
+.summary-card {
+  margin: 0 var(--space-lg) var(--space-md);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.summary-card-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-md);
+}
+
+.summary-stats {
+  display: flex;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-md);
+}
+
+.summary-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.summary-stat-value {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+}
+
+.summary-stat-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.encouragement-card {
+  margin: 0 var(--space-lg) var(--space-md);
+  padding: var(--space-lg);
+  background: linear-gradient(135deg, var(--color-praise-light), var(--color-accent-light));
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.encouragement-text {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* ============================================ */
+/* BADGES SCREEN                                */
+/* ============================================ */
+.streak-banner {
+  margin: 0 var(--space-lg) var(--space-lg);
+  padding: var(--space-lg);
+  background: linear-gradient(135deg, var(--color-accent-light), #FFF8E1);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+[data-theme="dark"] .streak-banner {
+  background: linear-gradient(135deg, var(--color-accent-light), #2A2418);
+}
+
+.streak-value {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+}
+
+.streak-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+}
+
+.badge-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-md);
+  padding: 0 var(--space-lg);
+}
+
+.badge-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-md) var(--space-sm);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+  transition: transform var(--duration-fast);
+}
+
+.badge-card:active {
+  transform: scale(0.95);
+}
+
+.badge-card.locked {
+  opacity: 0.5;
+}
+
+.badge-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.badge-card.locked .badge-icon {
+  filter: grayscale(100%);
+}
+
+.badge-name {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  line-height: 1.2;
+}
+
+.badge-status {
+  font-size: 10px;
+  color: var(--color-praise);
+  font-weight: var(--font-weight-semibold);
+}
+
+.badge-card.locked .badge-status {
+  color: var(--color-text-tertiary);
+}
+
+/* ============================================ */
+/* ACHIEVEMENT UNLOCK MODAL                     */
+/* ============================================ */
+.achievement-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: var(--space-lg);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-normal);
+}
+
+.achievement-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.achievement-content {
+  text-align: center;
+  transform: scale(0.5);
+  transition: transform 0.5s var(--ease-bounce);
+}
+
+.achievement-overlay.visible .achievement-content {
+  transform: scale(1);
+}
+
+.achievement-badge-icon {
+  font-size: 80px;
+  line-height: 1;
+  margin-bottom: var(--space-md);
+  display: inline-block;
+}
+
+.achievement-name {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-inverse);
+  margin-bottom: var(--space-sm);
+}
+
+.achievement-desc {
+  font-size: var(--font-size-md);
+  color: rgba(255,255,255,0.7);
+  max-width: 260px;
+  margin: 0 auto;
+}
+
+.achievement-dismiss {
+  padding: 12px 32px;
+  background: rgba(255,255,255,0.2);
+  color: var(--color-text-inverse);
+  border-radius: var(--radius-full);
+  font-weight: var(--font-weight-semibold);
+  backdrop-filter: blur(10px);
+}
+
+/* Confetti */
+@keyframes confetti-fall {
+  0% { transform: translate(var(--cx), var(--cy)) rotate(0deg) scale(1); opacity: 1; }
+  100% { transform: translate(calc(var(--cx) + var(--dx)), calc(var(--cy) + 200px)) rotate(720deg) scale(0); opacity: 0; }
+}
+
+.confetti-piece {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  z-index: 401;
+  pointer-events: none;
+}
+
+.confetti-piece.animate {
+  animation: confetti-fall 1.2s var(--ease-out) forwards;
+}
+
+/* ============================================ */
+/* SETTINGS SCREEN                              */
+/* ============================================ */
+.settings-list {
+  padding: 0 var(--space-lg);
+}
+
+.settings-group {
+  margin-bottom: var(--space-lg);
+}
+
+.settings-group-title {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-tertiary);
+  padding: 0 0 var(--space-sm);
+}
+
+.settings-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) 0;
+  border-bottom: 1px solid var(--color-bg-tertiary);
+}
+
+.settings-item:last-child {
+  border-bottom: none;
+}
+
+.settings-item-label {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+}
+
+.settings-item-desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+  margin-top: 2px;
+}
+
+/* Toggle switch */
+.toggle {
+  width: 50px;
+  height: 28px;
+  background: var(--color-correct-light);
+  border-radius: var(--radius-full);
+  position: relative;
+  cursor: pointer;
+  transition: background var(--duration-fast);
+}
+
+.toggle.active {
+  background: var(--color-praise);
+}
+
+.toggle-knob {
+  width: 22px;
+  height: 22px;
+  background: white;
+  border-radius: var(--radius-full);
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--duration-fast) var(--ease-smooth);
+}
+
+.toggle.active .toggle-knob {
+  transform: translateX(22px);
+}
+
+/* Theme selector */
+.theme-selector {
+  display: flex;
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-full);
+  padding: 3px;
+}
+
+.theme-option {
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  transition: all var(--duration-fast);
+}
+
+.theme-option.active {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.about-section {
+  padding: var(--space-lg);
+  margin: 0 var(--space-lg);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.about-logo {
+  font-size: 48px;
+  margin-bottom: var(--space-sm);
+}
+
+.about-name {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: 4px;
+}
+
+.about-tagline {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-md);
+}
+
+.about-text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+/* ============================================ */
+/* EMPTY STATE                                  */
+/* ============================================ */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2xl);
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: var(--space-md);
+}
+
+.empty-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-sm);
+}
+
+.empty-desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- NUDGE BANNER -->
+  <div id="nudge-banner" class="nudge-banner"></div>
+
+  <!-- ENCOURAGEMENT TOAST -->
+  <div id="encouragement-toast" class="encouragement-toast"></div>
+
+  <!-- ============================================ -->
+  <!-- ONBOARDING                                   -->
+  <!-- ============================================ -->
+  <section id="screen-onboarding" class="screen">
+    <div class="onboarding-container">
+      <div class="onboarding-cards">
+        <!-- Card 1 -->
+        <div class="onboarding-card active" data-card="0">
+          <div class="onboarding-ratio">5:1</div>
+          <div class="onboarding-title">The Magic Ratio</div>
+          <div class="onboarding-desc">For every correction, give five praises. Research shows this builds the strongest parent-child relationships.</div>
+          <div class="onboarding-beads" style="margin-top: 24px">
+            <div class="onboarding-bead filled"></div>
+            <div class="onboarding-bead filled"></div>
+            <div class="onboarding-bead filled"></div>
+            <div class="onboarding-bead filled"></div>
+            <div class="onboarding-bead filled"></div>
+            <div class="onboarding-bead correction"></div>
+          </div>
+        </div>
+        <!-- Card 2 -->
+        <div class="onboarding-card" data-card="1">
+          <div class="onboarding-visual">🖐️</div>
+          <div class="onboarding-title">Your Digital Bracelet</div>
+          <div class="onboarding-desc">Just like moving bracelets between wrists — but smarter. Tap to track, watch the beads fill, and see your progress.</div>
+        </div>
+        <!-- Card 3 -->
+        <div class="onboarding-card" data-card="2">
+          <div class="onboarding-title" style="margin-bottom: 24px">Add Your First Child</div>
+          <div class="onboarding-form" id="onboarding-form">
+            <div class="form-group">
+              <label class="form-label">Child's Name</label>
+              <input type="text" class="form-input" id="onboarding-name" placeholder="Emma" maxlength="20" autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Choose an Avatar</label>
+              <div class="emoji-picker" id="onboarding-emoji">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Pick a Color</label>
+              <div class="color-picker" id="onboarding-color">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="onboarding-bottom">
+        <div class="onboarding-dots">
+          <div class="onboarding-dot active" data-dot="0"></div>
+          <div class="onboarding-dot" data-dot="1"></div>
+          <div class="onboarding-dot" data-dot="2"></div>
+        </div>
+        <button class="btn-primary" id="onboarding-next">Next</button>
+        <button class="btn-secondary" id="onboarding-skip">Skip</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- MAIN TRACKER                                 -->
+  <!-- ============================================ -->
+  <section id="screen-tracker" class="screen">
+    <div class="child-switcher">
+      <button class="child-switcher-arrow" id="switch-prev">&#8249;</button>
+      <div class="child-switcher-name" id="active-child-display">
+        <span class="child-avatar-badge" id="active-child-avatar"></span>
+        <span id="active-child-name">No Child</span>
+      </div>
+      <button class="child-switcher-arrow" id="switch-next">&#8250;</button>
+    </div>
+
+    <div class="bead-section">
+      <div class="bead-row" id="bead-row">
+        <div class="bead" data-bead="0"><div class="bead-fill"></div></div>
+        <div class="bead" data-bead="1"><div class="bead-fill"></div></div>
+        <div class="bead" data-bead="2"><div class="bead-fill"></div></div>
+        <div class="bead" data-bead="3"><div class="bead-fill"></div></div>
+        <div class="bead" data-bead="4"><div class="bead-fill"></div></div>
+        <div class="sparkle-container" id="sparkle-container"></div>
+      </div>
+      <div class="ratio-display">
+        <div class="ratio-value">
+          <span id="ratio-number">0:0</span>
+          <span class="ratio-badge" id="ratio-badge" style="display:none"></span>
+        </div>
+        <div class="ratio-label">Today's Ratio</div>
+        <div class="today-stats">
+          <span class="stat-item">
+            <span class="stat-dot" style="background: var(--color-praise)"></span>
+            <span id="praise-count">0</span> praises
+          </span>
+          <span class="stat-item">
+            <span class="stat-dot" style="background: var(--color-correct)"></span>
+            <span id="correct-count">0</span> corrections
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-section">
+      <button class="praise-btn" id="praise-btn">
+        <span class="btn-icon">🙌</span>
+        PRAISE
+      </button>
+      <button class="correct-btn" id="correct-btn">Correct</button>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- HISTORY                                      -->
+  <!-- ============================================ -->
+  <section id="screen-history" class="screen">
+    <div class="screen-header">
+      <h2>History</h2>
+    </div>
+    <div class="history-toggle">
+      <button class="history-toggle-btn active" data-period="week">Week</button>
+      <button class="history-toggle-btn" data-period="month">Month</button>
+    </div>
+    <div class="chart-container">
+      <div class="chart-title">Daily Ratio</div>
+      <div class="chart-bars" id="chart-bars"></div>
+    </div>
+    <div class="summary-card" id="today-summary">
+      <div class="summary-card-title">Today's Summary</div>
+      <div class="summary-stats">
+        <div class="summary-stat">
+          <span class="summary-stat-value" id="summary-praises" style="color: var(--color-praise)">0</span>
+          <span class="summary-stat-label">Praises</span>
+        </div>
+        <div class="summary-stat">
+          <span class="summary-stat-value" id="summary-corrections" style="color: var(--color-correct)">0</span>
+          <span class="summary-stat-label">Corrections</span>
+        </div>
+        <div class="summary-stat">
+          <span class="summary-stat-value" id="summary-ratio">-</span>
+          <span class="summary-stat-label">Ratio</span>
+        </div>
+      </div>
+    </div>
+    <div class="encouragement-card">
+      <div class="encouragement-text" id="history-encouragement">"Every praise plants a seed of confidence."</div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- BADGES                                       -->
+  <!-- ============================================ -->
+  <section id="screen-badges" class="screen">
+    <div class="screen-header">
+      <h2>Badges</h2>
+    </div>
+    <div class="streak-banner" id="streak-banner">
+      <div class="streak-value" id="streak-value">0</div>
+      <div class="streak-label">Day Streak</div>
+    </div>
+    <div class="badge-grid" id="badge-grid"></div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- PROFILES                                     -->
+  <!-- ============================================ -->
+  <section id="screen-profiles" class="screen">
+    <div class="screen-header">
+      <h2>Children</h2>
+      <button class="header-action" id="add-child-btn">+</button>
+    </div>
+    <div class="profiles-list" id="profiles-list"></div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- SETTINGS                                     -->
+  <!-- ============================================ -->
+  <section id="screen-settings" class="screen">
+    <div class="screen-header">
+      <h2>Settings</h2>
+    </div>
+    <div class="settings-list">
+      <div class="settings-group">
+        <div class="settings-group-title">Appearance</div>
+        <div class="settings-item">
+          <div>
+            <div class="settings-item-label">Theme</div>
+          </div>
+          <div class="theme-selector" id="theme-selector">
+            <button class="theme-option active" data-theme="light">Light</button>
+            <button class="theme-option" data-theme="dark">Dark</button>
+            <button class="theme-option" data-theme="auto">Auto</button>
+          </div>
+        </div>
+      </div>
+      <div class="settings-group">
+        <div class="settings-group-title">Data</div>
+        <div class="settings-item">
+          <div>
+            <div class="settings-item-label">Export Data</div>
+            <div class="settings-item-desc">Copy all data as JSON</div>
+          </div>
+          <button class="header-action" id="export-btn" style="font-size:14px">📋</button>
+        </div>
+        <div class="settings-item">
+          <div>
+            <div class="settings-item-label" style="color: var(--color-danger)">Reset All Data</div>
+            <div class="settings-item-desc">This cannot be undone</div>
+          </div>
+          <button class="header-action" id="reset-btn" style="font-size:14px">🗑️</button>
+        </div>
+      </div>
+      <div class="settings-group">
+        <div class="about-section">
+          <div class="about-logo">🖐️</div>
+          <div class="about-name">HighFive</div>
+          <div class="about-tagline">Five praises. One correction. One great relationship.</div>
+          <div class="about-text">Based on the research-backed 5:1 positive-to-negative interaction ratio that builds strong parent-child relationships. Inspired by the bracelet method used by parents and educators.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- TAB BAR                                      -->
+  <!-- ============================================ -->
+  <nav id="tab-bar">
+    <button class="tab-item active" data-screen="screen-tracker">
+      <span class="tab-icon">🖐️</span>
+      <span class="tab-label">Track</span>
+    </button>
+    <button class="tab-item" data-screen="screen-history">
+      <span class="tab-icon">📊</span>
+      <span class="tab-label">History</span>
+    </button>
+    <button class="tab-item" data-screen="screen-badges">
+      <span class="tab-icon">⭐</span>
+      <span class="tab-label">Badges</span>
+    </button>
+    <button class="tab-item" data-screen="screen-profiles">
+      <span class="tab-icon">👤</span>
+      <span class="tab-label">Kids</span>
+    </button>
+    <button class="tab-item" data-screen="screen-settings">
+      <span class="tab-icon">⚙️</span>
+      <span class="tab-label">Settings</span>
+    </button>
+  </nav>
+
+  <!-- ============================================ -->
+  <!-- MODALS                                       -->
+  <!-- ============================================ -->
+  <div class="modal-backdrop" id="child-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="child-modal-title">Add Child</h3>
+        <button class="modal-close" id="child-modal-close">✕</button>
+      </div>
+      <div class="modal-form">
+        <div class="form-group">
+          <label class="form-label">Name</label>
+          <input type="text" class="form-input" id="modal-child-name" placeholder="Child's name" maxlength="20" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Avatar</label>
+          <div class="emoji-picker" id="modal-emoji-picker"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Color</label>
+          <div class="color-picker" id="modal-color-picker"></div>
+        </div>
+        <button class="btn-primary" id="modal-save-child">Save</button>
+        <button class="btn-danger" id="modal-delete-child" style="display:none">Delete Child</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Badge detail modal -->
+  <div class="modal-backdrop" id="badge-modal">
+    <div class="modal" style="text-align:center">
+      <div class="modal-header">
+        <h3 class="modal-title">Badge</h3>
+        <button class="modal-close" id="badge-modal-close">✕</button>
+      </div>
+      <div id="badge-modal-content" style="padding: 0 0 var(--space-lg)">
+      </div>
+    </div>
+  </div>
+
+  <!-- Achievement celebration overlay -->
+  <div class="achievement-overlay" id="achievement-overlay">
+    <div class="achievement-content">
+      <div class="achievement-badge-icon" id="achievement-icon"></div>
+      <div class="achievement-name" id="achievement-name"></div>
+      <div class="achievement-desc" id="achievement-desc"></div>
+    </div>
+    <button class="achievement-dismiss" id="achievement-dismiss">Awesome!</button>
+  </div>
+
+  <!-- Confirm dialog -->
+  <div class="modal-backdrop" id="confirm-modal">
+    <div class="modal" style="text-align:center; padding-top: var(--space-2xl)">
+      <div style="font-size: 48px; margin-bottom: var(--space-md)" id="confirm-icon">⚠️</div>
+      <div style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); margin-bottom: var(--space-sm)" id="confirm-title">Are you sure?</div>
+      <div style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--space-xl)" id="confirm-desc"></div>
+      <div style="display:flex; gap: var(--space-md)">
+        <button class="btn-primary" style="background: var(--color-correct); flex:1" id="confirm-cancel">Cancel</button>
+        <button class="btn-primary" style="background: var(--color-danger); flex:1" id="confirm-ok">Delete</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ============================================
+// CONSTANTS
+// ============================================
+const EMOJIS = ['🦊','🐻','🦁','🐰','🦋','🐢','🌻','🌈','🚀','🎨','🎵','💫'];
+const COLORS = [
+  { name: 'coral', hex: '#FF8A80' },
+  { name: 'sky', hex: '#82B1FF' },
+  { name: 'lavender', hex: '#B39DDB' },
+  { name: 'mint', hex: '#80CBC4' },
+  { name: 'sunflower', hex: '#FFD54F' },
+  { name: 'peach', hex: '#FFAB91' }
+];
+
+const BADGES = [
+  // Milestones
+  { id: 'M1', name: 'First High Five', desc: 'Log your first praise', icon: '🌟', category: 'milestone', check: s => s.totalPraises >= 1 },
+  { id: 'M2', name: 'Double Digits', desc: 'Reach 10 total praises', icon: '🙌', category: 'milestone', check: s => s.totalPraises >= 10 },
+  { id: 'M3', name: 'Half Century', desc: 'Reach 50 total praises', icon: '🏅', category: 'milestone', check: s => s.totalPraises >= 50 },
+  { id: 'M4', name: 'Century', desc: 'Reach 100 total praises', icon: '🏆', category: 'milestone', check: s => s.totalPraises >= 100 },
+  { id: 'M5', name: '500 Club', desc: 'Reach 500 total praises', icon: '👑', category: 'milestone', check: s => s.totalPraises >= 500 },
+  { id: 'M6', name: 'Thousand Strong', desc: 'Reach 1,000 total praises', icon: '💎', category: 'milestone', check: s => s.totalPraises >= 1000 },
+  // Ratio
+  { id: 'R1', name: 'Perfect Day', desc: 'Complete a day with 5:1 or better', icon: '☀️', category: 'ratio', check: (s, ctx) => ctx.todayRatioMet },
+  { id: 'R2', name: 'Perfect Week', desc: '7 consecutive days at 5:1+', icon: '🌈', category: 'ratio', check: s => s.currentStreak >= 7 },
+  { id: 'R3', name: 'Super Ratio', desc: 'Achieve 10:1 in a single day', icon: '🚀', category: 'ratio', check: (s, ctx) => ctx.todayRatio >= 10 && ctx.todayCorrections >= 1 },
+  { id: 'R4', name: 'Overachiever', desc: 'Achieve 15:1 in a single day', icon: '✨', category: 'ratio', check: (s, ctx) => ctx.todayRatio >= 15 && ctx.todayCorrections >= 1 },
+  { id: 'R5', name: 'Ratio Master', desc: '30 days at 5:1+ (any child)', icon: '💠', category: 'ratio', check: s => s.daysAtRatio >= 30 },
+  // Streaks
+  { id: 'S1', name: 'Getting Started', desc: '3-day streak', icon: '🔥', category: 'streak', check: s => s.currentStreak >= 3 },
+  { id: 'S2', name: 'Week Warrior', desc: '7-day streak', icon: '🔥', category: 'streak', check: s => s.currentStreak >= 7 },
+  { id: 'S3', name: 'Fortnight Force', desc: '14-day streak', icon: '⚡', category: 'streak', check: s => s.currentStreak >= 14 },
+  { id: 'S4', name: 'Monthly Master', desc: '30-day streak', icon: '🏔️', category: 'streak', check: s => s.currentStreak >= 30 },
+  { id: 'S5', name: 'Century Streak', desc: '100-day streak', icon: '🌍', category: 'streak', check: s => s.currentStreak >= 100 },
+  // Special
+  { id: 'X1', name: 'Multi-Parent', desc: 'Track 2+ children', icon: '👨‍👩‍👧‍👦', category: 'special', check: s => s.childCount >= 2 },
+  { id: 'X2', name: 'Night Owl', desc: 'Log a praise after 9pm', icon: '🌙', category: 'special', check: (s, ctx) => ctx.nightPraise },
+  { id: 'X3', name: 'Early Bird', desc: 'Log a praise before 7am', icon: '🌅', category: 'special', check: (s, ctx) => ctx.earlyPraise },
+  { id: 'X4', name: 'Weekend Warrior', desc: 'Log on both Sat and Sun', icon: '📅', category: 'special', check: (s, ctx) => ctx.weekendWarrior },
+];
+
+const PRAISE_MSGS = [
+  "That's the spirit!",
+  "They noticed. Trust me.",
+  "Building confidence, one praise at a time.",
+  "You're their biggest fan.",
+  "Small moment, big impact.",
+  "Keep it up!",
+  "Love in action.",
+];
+
+const CYCLE_MSGS = [
+  "Full bracelet! You're doing great.",
+  "Another round complete!",
+  "Five for five! Correction slot ready.",
+];
+
+const RATIO_MSGS = [
+  "Your patience is their foundation.",
+  "Small moments, big impact.",
+  "You're building something beautiful.",
+];
+
+const TOUGH_MSGS = [
+  "Tough day? That's okay. Tomorrow is fresh.",
+  "Try catching them being good next.",
+  "Every parent has hard days. You're still here.",
+];
+
+const ENCOURAGEMENT_POOL = [
+  "Every praise plants a seed of confidence.",
+  "You're shaping how they see the world.",
+  "Your words become their inner voice.",
+  "Consistency is love made visible.",
+  "The effort you put in today echoes for years.",
+  "They may not say it, but they feel it.",
+  "You're doing better than you think.",
+];
+
+// ============================================
+// DATA STORE
+// ============================================
+const Store = {
+  _prefix: 'highfive_',
+
+  get(key, fallback = null) {
+    try {
+      const raw = localStorage.getItem(this._prefix + key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch { return fallback; }
+  },
+
+  set(key, value) {
+    localStorage.setItem(this._prefix + key, JSON.stringify(value));
+  },
+
+  remove(key) {
+    localStorage.removeItem(this._prefix + key);
+  },
+
+  // App State
+  getState() {
+    return this.get('app_state', {
+      activeChildId: null,
+      onboardingCompleted: false,
+      theme: 'light',
+      lastActiveDate: null,
+      graceDays: 0
+    });
+  },
+  setState(patch) {
+    this.set('app_state', { ...this.getState(), ...patch });
+  },
+
+  // Children
+  getChildren() { return this.get('children', []); },
+  setChildren(c) { this.set('children', c); },
+  getActiveChild() {
+    const state = this.getState();
+    return this.getChildren().find(c => c.id === state.activeChildId) || null;
+  },
+
+  // Events
+  getEvents(childId) { return this.get('events_' + childId, []); },
+  addEvent(childId, type) {
+    const events = this.getEvents(childId);
+    const now = new Date();
+    events.push({
+      id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2),
+      childId,
+      type,
+      timestamp: now.toISOString(),
+      date: toDateStr(now)
+    });
+    this.set('events_' + childId, events);
+    return events;
+  },
+
+  // Achievements
+  getEarnedBadges() { return this.get('earned_badges', {}); },
+  earnBadge(id) {
+    const earned = this.getEarnedBadges();
+    if (!earned[id]) {
+      earned[id] = new Date().toISOString();
+      this.set('earned_badges', earned);
+      return true;
+    }
+    return false;
+  },
+
+  clearAll() {
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith(this._prefix)) keys.push(k);
+    }
+    keys.forEach(k => localStorage.removeItem(k));
+  },
+
+  exportAll() {
+    const data = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith(this._prefix)) {
+        data[k] = localStorage.getItem(k);
+      }
+    }
+    return JSON.stringify(data, null, 2);
+  }
+};
+
+// ============================================
+// UTILITIES
+// ============================================
+function toDateStr(d) {
+  const dt = d instanceof Date ? d : new Date(d);
+  return dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0') + '-' + String(dt.getDate()).padStart(2,'0');
+}
+
+function todayStr() { return toDateStr(new Date()); }
+
+function getDayLabel(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()];
+}
+
+function getDateRange(days) {
+  const dates = [];
+  const today = new Date();
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    dates.push(toDateStr(d));
+  }
+  return dates;
+}
+
+function getDaySummary(childId, dateStr) {
+  const events = Store.getEvents(childId);
+  const dayEvents = events.filter(e => e.date === dateStr);
+  const praises = dayEvents.filter(e => e.type === 'praise').length;
+  const corrections = dayEvents.filter(e => e.type === 'correction').length;
+  const ratio = corrections > 0 ? praises / corrections : (praises > 0 ? praises : 0);
+  return { praises, corrections, ratio, ratioMet: corrections === 0 ? praises >= 5 : ratio >= 5 };
+}
+
+function getAllChildrenDaySummary(dateStr) {
+  const children = Store.getChildren();
+  let tp = 0, tc = 0;
+  children.forEach(c => {
+    const s = getDaySummary(c.id, dateStr);
+    tp += s.praises;
+    tc += s.corrections;
+  });
+  const ratio = tc > 0 ? tp / tc : (tp > 0 ? tp : 0);
+  return { praises: tp, corrections: tc, ratio, ratioMet: tc === 0 ? tp >= 5 : ratio >= 5 };
+}
+
+function computeStreak() {
+  const children = Store.getChildren();
+  if (children.length === 0) return 0;
+  let streak = 0;
+  const today = new Date();
+  const state = Store.getState();
+  let graceDays = state.graceDays || 0;
+
+  for (let i = 0; i < 400; i++) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const ds = toDateStr(d);
+    const summary = getAllChildrenDaySummary(ds);
+
+    if (i === 0 && summary.praises === 0 && summary.corrections === 0) continue;
+
+    if (summary.ratioMet) {
+      streak++;
+    } else if (summary.praises > 0 || summary.corrections > 0) {
+      break;
+    } else {
+      if (graceDays > 0 && i > 0) {
+        graceDays--;
+        streak++;
+      } else if (i > 0) {
+        break;
+      }
+    }
+  }
+  return streak;
+}
+
+function computeStats() {
+  const children = Store.getChildren();
+  let totalPraises = 0, totalCorrections = 0, daysAtRatio = 0;
+  const allDates = new Set();
+  children.forEach(c => {
+    const events = Store.getEvents(c.id);
+    events.forEach(e => {
+      if (e.type === 'praise') totalPraises++;
+      else totalCorrections++;
+      allDates.add(e.date);
+    });
+  });
+  allDates.forEach(d => {
+    const s = getAllChildrenDaySummary(d);
+    if (s.ratioMet) daysAtRatio++;
+  });
+  const currentStreak = computeStreak();
+  const todaySummary = getAllChildrenDaySummary(todayStr());
+  const now = new Date();
+  const hour = now.getHours();
+
+  // Weekend warrior check
+  const thisSunday = new Date();
+  thisSunday.setDate(thisSunday.getDate() - thisSunday.getDay());
+  const satStr = toDateStr(new Date(thisSunday.getFullYear(), thisSunday.getMonth(), thisSunday.getDate() + 6));
+  const sunStr = toDateStr(thisSunday);
+  const satSummary = getAllChildrenDaySummary(satStr);
+  const sunSummary = getAllChildrenDaySummary(sunStr);
+
+  return {
+    totalPraises,
+    totalCorrections,
+    daysAtRatio,
+    currentStreak,
+    childCount: children.length,
+    todayRatio: todaySummary.ratio,
+    todayRatioMet: todaySummary.ratioMet,
+    todayCorrections: todaySummary.corrections,
+    nightPraise: hour >= 21,
+    earlyPraise: hour < 7,
+    weekendWarrior: satSummary.praises > 0 && sunSummary.praises > 0
+  };
+}
+
+function randomFrom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+// ============================================
+// APP CONTROLLER
+// ============================================
+const App = {
+  currentScreen: 'screen-tracker',
+  historyPeriod: 'week',
+  editingChildId: null,
+  selectedEmoji: EMOJIS[0],
+  selectedColor: COLORS[0].hex,
+  onboardingStep: 0,
+  nudgeTimeout: null,
+  toastTimeout: null,
+  confirmCallback: null,
+
+  init() {
+    this.applyTheme();
+    const state = Store.getState();
+    if (!state.onboardingCompleted) {
+      this.showScreen('screen-onboarding', false);
+    } else {
+      this.showScreen('screen-tracker', false);
+    }
+    this.bindEvents();
+    this.renderOnboardingPickers();
+    this.updateTracker();
+    this.updateStreak();
+  },
+
+  // ---- THEME ----
+  applyTheme() {
+    const state = Store.getState();
+    let theme = state.theme || 'light';
+    if (theme === 'auto') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    document.documentElement.setAttribute('data-theme', theme);
+    document.querySelectorAll('#theme-selector .theme-option').forEach(b => {
+      b.classList.toggle('active', b.dataset.theme === (state.theme || 'light'));
+    });
+  },
+
+  // ---- NAVIGATION ----
+  showScreen(id, animate = true) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.tab-item').forEach(t => {
+      t.classList.toggle('active', t.dataset.screen === id);
+    });
+    const showTabs = id !== 'screen-onboarding';
+    document.getElementById('tab-bar').style.display = showTabs ? 'flex' : 'none';
+    this.currentScreen = id;
+
+    if (id === 'screen-history') this.renderHistory();
+    if (id === 'screen-badges') this.renderBadges();
+    if (id === 'screen-profiles') this.renderProfiles();
+    if (id === 'screen-tracker') this.updateTracker();
+  },
+
+  // ---- EVENT BINDING ----
+  bindEvents() {
+    // Tab bar
+    document.querySelectorAll('.tab-item').forEach(t => {
+      t.addEventListener('click', () => this.showScreen(t.dataset.screen));
+    });
+
+    // Onboarding
+    document.getElementById('onboarding-next').addEventListener('click', () => this.nextOnboarding());
+    document.getElementById('onboarding-skip').addEventListener('click', () => this.skipOnboarding());
+
+    // Main tracker
+    document.getElementById('praise-btn').addEventListener('click', (e) => this.logPraise(e));
+    document.getElementById('correct-btn').addEventListener('click', () => this.logCorrection());
+    document.getElementById('switch-prev').addEventListener('click', () => this.switchChild(-1));
+    document.getElementById('switch-next').addEventListener('click', () => this.switchChild(1));
+
+    // History toggle
+    document.querySelectorAll('.history-toggle-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        document.querySelectorAll('.history-toggle-btn').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        this.historyPeriod = b.dataset.period;
+        this.renderHistory();
+      });
+    });
+
+    // Child modal
+    document.getElementById('add-child-btn').addEventListener('click', () => this.openChildModal());
+    document.getElementById('child-modal-close').addEventListener('click', () => this.closeModal('child-modal'));
+    document.getElementById('modal-save-child').addEventListener('click', () => this.saveChild());
+    document.getElementById('modal-delete-child').addEventListener('click', () => this.deleteChild());
+
+    // Badge modal
+    document.getElementById('badge-modal-close').addEventListener('click', () => this.closeModal('badge-modal'));
+
+    // Achievement
+    document.getElementById('achievement-dismiss').addEventListener('click', () => {
+      document.getElementById('achievement-overlay').classList.remove('visible');
+      document.querySelectorAll('.confetti-piece').forEach(c => c.remove());
+    });
+
+    // Settings
+    document.querySelectorAll('#theme-selector .theme-option').forEach(b => {
+      b.addEventListener('click', () => {
+        Store.setState({ theme: b.dataset.theme });
+        this.applyTheme();
+      });
+    });
+    document.getElementById('export-btn').addEventListener('click', () => {
+      navigator.clipboard.writeText(Store.exportAll()).then(() => {
+        this.showToast('Data copied to clipboard!');
+      });
+    });
+    document.getElementById('reset-btn').addEventListener('click', () => {
+      this.showConfirm('Reset All Data?', 'All tracking data, children, and badges will be permanently deleted.', () => {
+        Store.clearAll();
+        location.reload();
+      });
+    });
+
+    // Confirm modal
+    document.getElementById('confirm-cancel').addEventListener('click', () => this.closeModal('confirm-modal'));
+    document.getElementById('confirm-ok').addEventListener('click', () => {
+      this.closeModal('confirm-modal');
+      if (this.confirmCallback) this.confirmCallback();
+    });
+
+    // Modal backdrop close
+    ['child-modal', 'badge-modal', 'confirm-modal'].forEach(id => {
+      document.getElementById(id).addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) this.closeModal(id);
+      });
+    });
+  },
+
+  // ---- ONBOARDING ----
+  renderOnboardingPickers() {
+    // Main onboarding pickers
+    this.renderEmojiPicker('onboarding-emoji', (emoji) => {
+      this.selectedEmoji = emoji;
+    });
+    this.renderColorPicker('onboarding-color', (color) => {
+      this.selectedColor = color;
+    });
+    // Modal pickers
+    this.renderEmojiPicker('modal-emoji-picker', (emoji) => {
+      this.selectedEmoji = emoji;
+    });
+    this.renderColorPicker('modal-color-picker', (color) => {
+      this.selectedColor = color;
+    });
+  },
+
+  renderEmojiPicker(containerId, onSelect) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    EMOJIS.forEach((emoji, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'emoji-option' + (i === 0 ? ' selected' : '');
+      btn.textContent = emoji;
+      btn.addEventListener('click', () => {
+        container.querySelectorAll('.emoji-option').forEach(e => e.classList.remove('selected'));
+        btn.classList.add('selected');
+        onSelect(emoji);
+      });
+      container.appendChild(btn);
+    });
+  },
+
+  renderColorPicker(containerId, onSelect) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    COLORS.forEach((color, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'color-option' + (i === 0 ? ' selected' : '');
+      btn.style.background = color.hex;
+      btn.addEventListener('click', () => {
+        container.querySelectorAll('.color-option').forEach(e => e.classList.remove('selected'));
+        btn.classList.add('selected');
+        onSelect(color.hex);
+      });
+      container.appendChild(btn);
+    });
+  },
+
+  nextOnboarding() {
+    const cards = document.querySelectorAll('.onboarding-card');
+    const dots = document.querySelectorAll('.onboarding-dot');
+    const btn = document.getElementById('onboarding-next');
+
+    if (this.onboardingStep < 2) {
+      cards[this.onboardingStep].classList.remove('active');
+      cards[this.onboardingStep].classList.add('exiting');
+      this.onboardingStep++;
+      cards[this.onboardingStep].classList.add('active');
+      dots.forEach((d, i) => d.classList.toggle('active', i === this.onboardingStep));
+
+      setTimeout(() => {
+        cards.forEach(c => c.classList.remove('exiting'));
+      }, 300);
+
+      if (this.onboardingStep === 2) {
+        btn.textContent = "Let's Go!";
+        document.getElementById('onboarding-skip').style.display = 'none';
+      }
+    } else {
+      this.finishOnboarding();
+    }
+  },
+
+  skipOnboarding() {
+    this.onboardingStep = 2;
+    document.querySelectorAll('.onboarding-card').forEach(c => c.classList.remove('active', 'exiting'));
+    document.querySelector('.onboarding-card[data-card="2"]').classList.add('active');
+    document.querySelectorAll('.onboarding-dot').forEach((d, i) => d.classList.toggle('active', i === 2));
+    document.getElementById('onboarding-next').textContent = "Let's Go!";
+    document.getElementById('onboarding-skip').style.display = 'none';
+  },
+
+  finishOnboarding() {
+    const name = document.getElementById('onboarding-name').value.trim();
+    if (!name) {
+      document.getElementById('onboarding-name').style.boxShadow = '0 0 0 2px var(--color-danger)';
+      document.getElementById('onboarding-name').focus();
+      setTimeout(() => {
+        document.getElementById('onboarding-name').style.boxShadow = '';
+      }, 1500);
+      return;
+    }
+
+    const child = {
+      id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36),
+      name,
+      avatarEmoji: this.selectedEmoji,
+      avatarColor: this.selectedColor,
+      createdAt: new Date().toISOString(),
+      isActive: true,
+      order: 0
+    };
+
+    Store.setChildren([child]);
+    Store.setState({ activeChildId: child.id, onboardingCompleted: true });
+    this.showScreen('screen-tracker');
+    this.updateTracker();
+  },
+
+  // ---- MAIN TRACKER ----
+  updateTracker() {
+    const child = Store.getActiveChild();
+    const children = Store.getChildren();
+
+    // Child switcher
+    const prevBtn = document.getElementById('switch-prev');
+    const nextBtn = document.getElementById('switch-next');
+    prevBtn.classList.toggle('visible', children.length > 1);
+    nextBtn.classList.toggle('visible', children.length > 1);
+
+    if (child) {
+      document.getElementById('active-child-name').textContent = child.name;
+      const avatar = document.getElementById('active-child-avatar');
+      avatar.textContent = child.avatarEmoji;
+      avatar.style.background = child.avatarColor + '30';
+
+      // Today's data
+      const summary = getDaySummary(child.id, todayStr());
+      const beadCount = summary.praises % 5;
+      const cycleComplete = summary.praises > 0 && beadCount === 0 && summary.praises >= 5;
+
+      // Update beads
+      const beads = document.querySelectorAll('#bead-row .bead');
+      beads.forEach((bead, i) => {
+        const fill = bead.querySelector('.bead-fill');
+        fill.style.background = child.avatarColor;
+
+        const shouldFill = cycleComplete ? true : i < beadCount;
+        bead.classList.toggle('filled', shouldFill);
+        bead.classList.remove('just-filled', 'draining');
+      });
+
+      // Correct button state
+      const correctBtn = document.getElementById('correct-btn');
+      correctBtn.classList.toggle('slot-available', cycleComplete || summary.praises >= 5);
+
+      // Ratio display
+      const ratioStr = summary.corrections > 0
+        ? (summary.praises / summary.corrections).toFixed(1) + ':1'
+        : (summary.praises > 0 ? summary.praises + ':0' : '0:0');
+      document.getElementById('ratio-number').textContent = ratioStr;
+
+      // Ratio badge
+      const badge = document.getElementById('ratio-badge');
+      if (summary.praises > 0 || summary.corrections > 0) {
+        badge.style.display = 'inline-block';
+        if (summary.corrections === 0 || summary.praises / Math.max(summary.corrections, 1) >= 5) {
+          badge.textContent = 'Excellent';
+          badge.className = 'ratio-badge excellent';
+        } else if (summary.praises / Math.max(summary.corrections, 1) >= 3) {
+          badge.textContent = 'Good';
+          badge.className = 'ratio-badge good';
+        } else {
+          badge.textContent = 'Keep going';
+          badge.className = 'ratio-badge needs-work';
+        }
+      } else {
+        badge.style.display = 'none';
+      }
+
+      document.getElementById('praise-count').textContent = summary.praises;
+      document.getElementById('correct-count').textContent = summary.corrections;
+    } else {
+      document.getElementById('active-child-name').textContent = 'Add a child';
+      document.getElementById('active-child-avatar').textContent = '➕';
+      document.getElementById('active-child-avatar').style.background = 'var(--color-bg-tertiary)';
+    }
+  },
+
+  logPraise(e) {
+    const child = Store.getActiveChild();
+    if (!child) { this.showScreen('screen-profiles'); return; }
+
+    Store.addEvent(child.id, 'praise');
+    const summary = getDaySummary(child.id, todayStr());
+
+    // Bead animation
+    const beadCount = summary.praises % 5;
+    const cycleJustCompleted = beadCount === 0 && summary.praises > 0;
+    const targetBead = cycleJustCompleted ? 4 : beadCount - 1;
+
+    const beads = document.querySelectorAll('#bead-row .bead');
+    beads.forEach((bead, i) => {
+      const fill = bead.querySelector('.bead-fill');
+      fill.style.background = child.avatarColor;
+      if (i === targetBead) {
+        bead.classList.add('filled', 'just-filled');
+        setTimeout(() => bead.classList.remove('just-filled'), 500);
+      } else if (i < (cycleJustCompleted ? 5 : beadCount)) {
+        bead.classList.add('filled');
+      }
+    });
+
+    // Ripple on praise button
+    this.createRipple(e);
+
+    // Cycle complete sparkle
+    if (cycleJustCompleted) {
+      const beadRow = document.getElementById('bead-row');
+      beadRow.classList.add('cycle-complete');
+      this.createSparkles();
+      setTimeout(() => beadRow.classList.remove('cycle-complete'), 900);
+      this.showToast(randomFrom(CYCLE_MSGS));
+    } else if (Math.random() < 0.3) {
+      this.showToast(randomFrom(PRAISE_MSGS));
+    }
+
+    this.updateTracker();
+    this.checkAchievements();
+    this.updateStreak();
+  },
+
+  logCorrection() {
+    const child = Store.getActiveChild();
+    if (!child) return;
+
+    Store.addEvent(child.id, 'correction');
+    const summary = getDaySummary(child.id, todayStr());
+
+    // Drain animation
+    const beads = document.querySelectorAll('#bead-row .bead');
+    beads.forEach((bead, i) => {
+      if (bead.classList.contains('filled')) {
+        bead.classList.add('draining');
+        setTimeout(() => {
+          bead.classList.remove('filled', 'draining');
+        }, 300 + i * 60);
+      }
+    });
+
+    // Nudge if ratio is bad
+    const ratio = summary.corrections > 0 ? summary.praises / summary.corrections : 999;
+    if (ratio < 5 && summary.corrections > 0) {
+      this.showNudge(randomFrom(TOUGH_MSGS));
+    }
+
+    setTimeout(() => this.updateTracker(), 600);
+    this.checkAchievements();
+    this.updateStreak();
+  },
+
+  switchChild(dir) {
+    const children = Store.getChildren();
+    if (children.length <= 1) return;
+    const state = Store.getState();
+    const idx = children.findIndex(c => c.id === state.activeChildId);
+    let newIdx = idx + dir;
+    if (newIdx < 0) newIdx = children.length - 1;
+    if (newIdx >= children.length) newIdx = 0;
+    Store.setState({ activeChildId: children[newIdx].id });
+    this.updateTracker();
+  },
+
+  createRipple(e) {
+    const btn = document.getElementById('praise-btn');
+    const rect = btn.getBoundingClientRect();
+    const ripple = document.createElement('div');
+    ripple.className = 'ripple';
+    const size = Math.max(rect.width, rect.height);
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+    ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+    btn.appendChild(ripple);
+    requestAnimationFrame(() => ripple.classList.add('animate'));
+    setTimeout(() => ripple.remove(), 600);
+  },
+
+  createSparkles() {
+    const container = document.getElementById('sparkle-container');
+    const colors = ['#FFD700', '#FF6B6B', '#4CAF82', '#82B1FF', '#FFB74D', '#E040FB'];
+    for (let i = 0; i < 8; i++) {
+      const spark = document.createElement('div');
+      spark.className = 'sparkle';
+      spark.style.background = colors[i % colors.length];
+      const angle = (i / 8) * Math.PI * 2;
+      const dist = 40 + Math.random() * 30;
+      spark.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+      spark.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+      container.appendChild(spark);
+      requestAnimationFrame(() => spark.classList.add('animate'));
+      setTimeout(() => spark.remove(), 800);
+    }
+  },
+
+  showNudge(msg) {
+    const banner = document.getElementById('nudge-banner');
+    banner.textContent = msg;
+    banner.classList.add('visible');
+    clearTimeout(this.nudgeTimeout);
+    this.nudgeTimeout = setTimeout(() => banner.classList.remove('visible'), 3000);
+  },
+
+  showToast(msg) {
+    const toast = document.getElementById('encouragement-toast');
+    toast.textContent = msg;
+    toast.classList.add('visible');
+    clearTimeout(this.toastTimeout);
+    this.toastTimeout = setTimeout(() => toast.classList.remove('visible'), 2500);
+  },
+
+  // ---- CHILD PROFILES ----
+  renderProfiles() {
+    const list = document.getElementById('profiles-list');
+    const children = Store.getChildren();
+    const state = Store.getState();
+
+    list.innerHTML = '';
+    children.forEach(child => {
+      const summary = getDaySummary(child.id, todayStr());
+      const isActive = child.id === state.activeChildId;
+      const card = document.createElement('button');
+      card.className = 'profile-card';
+      card.innerHTML = `
+        <div class="profile-avatar" style="background: ${child.avatarColor}30">
+          ${child.avatarEmoji}
+        </div>
+        <div class="profile-info">
+          <div class="profile-name">${child.name}</div>
+          <div class="profile-stats">
+            ${summary.praises}/${summary.corrections} today
+            ${summary.corrections > 0 ? ' · ' + (summary.praises/summary.corrections).toFixed(1) + ':1' : ''}
+          </div>
+        </div>
+        ${isActive ? '<span class="profile-active-badge">Active</span>' : ''}
+      `;
+      card.addEventListener('click', () => {
+        Store.setState({ activeChildId: child.id });
+        this.renderProfiles();
+        this.updateTracker();
+      });
+      card.addEventListener('dblclick', () => this.openChildModal(child));
+
+      // Long press to edit
+      let pressTimer;
+      card.addEventListener('touchstart', () => {
+        pressTimer = setTimeout(() => this.openChildModal(child), 500);
+      }, { passive: true });
+      card.addEventListener('touchend', () => clearTimeout(pressTimer));
+      card.addEventListener('touchmove', () => clearTimeout(pressTimer));
+
+      list.appendChild(card);
+    });
+
+    // Add child button
+    const addBtn = document.createElement('button');
+    addBtn.className = 'add-child-card';
+    addBtn.innerHTML = '<span style="font-size:20px">+</span> Add Child';
+    addBtn.addEventListener('click', () => this.openChildModal());
+    list.appendChild(addBtn);
+  },
+
+  openChildModal(child = null) {
+    this.editingChildId = child ? child.id : null;
+    document.getElementById('child-modal-title').textContent = child ? 'Edit Child' : 'Add Child';
+    document.getElementById('modal-child-name').value = child ? child.name : '';
+    document.getElementById('modal-delete-child').style.display = child ? 'block' : 'none';
+
+    // Reset pickers
+    this.selectedEmoji = child ? child.avatarEmoji : EMOJIS[0];
+    this.selectedColor = child ? child.avatarColor : COLORS[0].hex;
+
+    const emojiContainer = document.getElementById('modal-emoji-picker');
+    emojiContainer.querySelectorAll('.emoji-option').forEach(e => {
+      e.classList.toggle('selected', e.textContent === this.selectedEmoji);
+    });
+    const colorContainer = document.getElementById('modal-color-picker');
+    colorContainer.querySelectorAll('.color-option').forEach(e => {
+      e.classList.toggle('selected', e.style.background === this.selectedColor ||
+        this.rgbToHex(e.style.backgroundColor) === this.selectedColor.toUpperCase());
+    });
+
+    document.getElementById('child-modal').classList.add('visible');
+    setTimeout(() => document.getElementById('modal-child-name').focus(), 300);
+  },
+
+  rgbToHex(rgb) {
+    if (rgb.startsWith('#')) return rgb.toUpperCase();
+    const parts = rgb.match(/\d+/g);
+    if (!parts) return rgb;
+    return '#' + parts.slice(0, 3).map(x => parseInt(x).toString(16).padStart(2, '0')).join('').toUpperCase();
+  },
+
+  saveChild() {
+    const name = document.getElementById('modal-child-name').value.trim();
+    if (!name) {
+      document.getElementById('modal-child-name').style.boxShadow = '0 0 0 2px var(--color-danger)';
+      setTimeout(() => document.getElementById('modal-child-name').style.boxShadow = '', 1500);
+      return;
+    }
+
+    const children = Store.getChildren();
+
+    if (this.editingChildId) {
+      const idx = children.findIndex(c => c.id === this.editingChildId);
+      if (idx >= 0) {
+        children[idx].name = name;
+        children[idx].avatarEmoji = this.selectedEmoji;
+        children[idx].avatarColor = this.selectedColor;
+      }
+    } else {
+      const child = {
+        id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36),
+        name,
+        avatarEmoji: this.selectedEmoji,
+        avatarColor: this.selectedColor,
+        createdAt: new Date().toISOString(),
+        isActive: false,
+        order: children.length
+      };
+      children.push(child);
+      if (children.length === 1) {
+        Store.setState({ activeChildId: child.id });
+      }
+    }
+
+    Store.setChildren(children);
+    this.closeModal('child-modal');
+    this.renderProfiles();
+    this.updateTracker();
+    this.checkAchievements();
+  },
+
+  deleteChild() {
+    const children = Store.getChildren();
+    if (children.length <= 1) {
+      this.showToast('You need at least one child.');
+      return;
+    }
+    this.showConfirm('Delete Child?', 'All tracking data for this child will be permanently lost.', () => {
+      const children = Store.getChildren();
+      const filtered = children.filter(c => c.id !== this.editingChildId);
+      Store.setChildren(filtered);
+      Store.remove('events_' + this.editingChildId);
+      const state = Store.getState();
+      if (state.activeChildId === this.editingChildId) {
+        Store.setState({ activeChildId: filtered[0]?.id || null });
+      }
+      this.closeModal('child-modal');
+      this.renderProfiles();
+      this.updateTracker();
+    });
+  },
+
+  closeModal(id) {
+    document.getElementById(id).classList.remove('visible');
+  },
+
+  showConfirm(title, desc, callback) {
+    document.getElementById('confirm-title').textContent = title;
+    document.getElementById('confirm-desc').textContent = desc;
+    this.confirmCallback = callback;
+    document.getElementById('confirm-modal').classList.add('visible');
+  },
+
+  // ---- HISTORY ----
+  renderHistory() {
+    const child = Store.getActiveChild();
+    if (!child) return;
+
+    const days = this.historyPeriod === 'week' ? 7 : 28;
+    const dates = getDateRange(days);
+
+    // Chart
+    const chartContainer = document.getElementById('chart-bars');
+    chartContainer.innerHTML = '';
+
+    let maxRatio = 5;
+    const summaries = dates.map(d => {
+      const s = getDaySummary(child.id, d);
+      if (s.ratio > maxRatio && s.corrections > 0) maxRatio = s.ratio;
+      return { ...s, date: d };
+    });
+
+    summaries.forEach(s => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'chart-bar-wrapper';
+
+      const bar = document.createElement('div');
+      bar.className = 'chart-bar';
+
+      const displayRatio = s.corrections > 0 ? s.ratio : (s.praises > 0 ? Math.min(s.praises, maxRatio) : 0);
+      const height = maxRatio > 0 ? Math.max((displayRatio / maxRatio) * 100, 4) : 4;
+      bar.style.height = height + '%';
+
+      if (s.praises === 0 && s.corrections === 0) {
+        bar.classList.add('none');
+        bar.style.height = '4%';
+      } else if (s.ratioMet) {
+        bar.classList.add('excellent');
+      } else if (s.corrections > 0 && s.ratio >= 3) {
+        bar.classList.add('good');
+      } else {
+        bar.classList.add('low');
+      }
+
+      const label = document.createElement('div');
+      label.className = 'chart-bar-label';
+      label.textContent = this.historyPeriod === 'week' ? getDayLabel(s.date) : s.date.slice(8);
+
+      wrapper.appendChild(bar);
+      wrapper.appendChild(label);
+      chartContainer.appendChild(wrapper);
+    });
+
+    // Today summary
+    const today = getDaySummary(child.id, todayStr());
+    document.getElementById('summary-praises').textContent = today.praises;
+    document.getElementById('summary-corrections').textContent = today.corrections;
+    document.getElementById('summary-ratio').textContent = today.corrections > 0
+      ? (today.praises / today.corrections).toFixed(1) + ':1'
+      : (today.praises > 0 ? today.praises + ':0' : '-');
+
+    // Encouragement
+    document.getElementById('history-encouragement').textContent =
+      '"' + randomFrom(ENCOURAGEMENT_POOL) + '"';
+  },
+
+  // ---- BADGES ----
+  updateStreak() {
+    const streak = computeStreak();
+    const streakBanner = document.getElementById('streak-banner');
+    const streakValue = document.getElementById('streak-value');
+    const fire = streak >= 7 ? '🔥🔥' : streak >= 3 ? '🔥' : '✨';
+    streakValue.textContent = fire + ' ' + streak;
+  },
+
+  renderBadges() {
+    this.updateStreak();
+    const grid = document.getElementById('badge-grid');
+    const earned = Store.getEarnedBadges();
+    grid.innerHTML = '';
+
+    BADGES.forEach(badge => {
+      const isEarned = !!earned[badge.id];
+      const card = document.createElement('button');
+      card.className = 'badge-card' + (isEarned ? '' : ' locked');
+      card.innerHTML = `
+        <div class="badge-icon">${badge.icon}</div>
+        <div class="badge-name">${badge.name}</div>
+        <div class="badge-status">${isEarned ? '✓ Earned' : '🔒'}</div>
+      `;
+      card.addEventListener('click', () => this.showBadgeDetail(badge, isEarned));
+      grid.appendChild(card);
+    });
+  },
+
+  showBadgeDetail(badge, isEarned) {
+    const content = document.getElementById('badge-modal-content');
+    const earned = Store.getEarnedBadges();
+    content.innerHTML = `
+      <div style="font-size:64px; margin-bottom: var(--space-md)">${badge.icon}</div>
+      <div style="font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); margin-bottom: var(--space-sm)">${badge.name}</div>
+      <div style="font-size: var(--font-size-md); color: var(--color-text-secondary); margin-bottom: var(--space-md)">${badge.desc}</div>
+      <div style="font-size: var(--font-size-sm); color: ${isEarned ? 'var(--color-praise)' : 'var(--color-text-tertiary)'}; font-weight: var(--font-weight-semibold)">
+        ${isEarned ? '✓ Earned ' + new Date(earned[badge.id]).toLocaleDateString() : '🔒 Not yet earned'}
+      </div>
+    `;
+    document.getElementById('badge-modal').classList.add('visible');
+  },
+
+  // ---- ACHIEVEMENTS ENGINE ----
+  checkAchievements() {
+    const stats = computeStats();
+    const newBadges = [];
+
+    BADGES.forEach(badge => {
+      const earned = Store.getEarnedBadges();
+      if (earned[badge.id]) return;
+      try {
+        if (badge.check(stats, stats)) {
+          if (Store.earnBadge(badge.id)) {
+            newBadges.push(badge);
+          }
+        }
+      } catch {}
+    });
+
+    // Grace days
+    const streak = computeStreak();
+    const graceDays = Math.min(Math.floor(streak / 7), 2);
+    Store.setState({ graceDays, lastActiveDate: todayStr() });
+
+    // Show celebration for first new badge
+    if (newBadges.length > 0) {
+      setTimeout(() => this.showAchievement(newBadges[0]), 600);
+    }
+  },
+
+  showAchievement(badge) {
+    document.getElementById('achievement-icon').textContent = badge.icon;
+    document.getElementById('achievement-name').textContent = badge.name;
+    document.getElementById('achievement-desc').textContent = badge.desc;
+
+    // Confetti
+    const colors = ['#FFD700', '#FF6B6B', '#4CAF82', '#82B1FF', '#FFB74D', '#E040FB', '#FF8A80', '#B39DDB'];
+    for (let i = 0; i < 20; i++) {
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      piece.style.background = colors[i % colors.length];
+      piece.style.setProperty('--cx', (window.innerWidth / 2 + (Math.random() - 0.5) * 100) + 'px');
+      piece.style.setProperty('--cy', (window.innerHeight / 2 - 100) + 'px');
+      piece.style.setProperty('--dx', (Math.random() - 0.5) * 300 + 'px');
+      piece.style.width = (4 + Math.random() * 6) + 'px';
+      piece.style.height = (4 + Math.random() * 6) + 'px';
+      piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      document.body.appendChild(piece);
+      requestAnimationFrame(() => piece.classList.add('animate'));
+      setTimeout(() => piece.remove(), 1500);
+    }
+
+    document.getElementById('achievement-overlay').classList.add('visible');
+
+    // Auto dismiss
+    setTimeout(() => {
+      document.getElementById('achievement-overlay').classList.remove('visible');
+    }, 5000);
+  }
+};
+
+// ============================================
+// INIT
+// ============================================
+// Apply theme before paint
+(function() {
+  try {
+    const state = JSON.parse(localStorage.getItem('highfive_app_state'));
+    if (state && state.theme) {
+      let theme = state.theme;
+      if (theme === 'auto') theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+    }
+  } catch {}
+})();
+
+document.addEventListener('DOMContentLoaded', () => App.init());
+</script>
+</body>
+</html>
